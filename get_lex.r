@@ -8,17 +8,15 @@ lex_df<-function(pos_file="pos.csv",neg_file="neg.csv"){
   pos_val<-rep.int(1, nrow(pos_lex))
   pos_lex["value"]<-pos_val
   names(pos_lex)<-c("lexicon_name","count","value")
-  print("P")
   #get negative lexicons
   #neg_lex <- unique(read.csv(neg_file,header = FALSE))
   neg_lex <- unique(read.table(neg_file,header = FALSE,sep = ":"))
-  
   neg_lex<-neg_lex[,1:2]
   neg_val<-rep.int(-1, nrow(neg_lex))
   neg_lex["value"]<-neg_val
   names(neg_lex)<-c("lexicon_name","count","value")
-  print("N")
-  #Combine positive and negative lexicons to a single dataframe
+
+    #Combine positive and negative lexicons to a single dataframe
   rbind(pos_lex,neg_lex)
 }
 removeNA<- function(df){
@@ -35,7 +33,6 @@ removeNA<- function(df){
   #combined_lexicons<-data.frame(matrix(ncol=3,nrow=1))
   for (i in 1:length(domains))
   {
-   print(i)
     combined_lexicons<-lex_df(pos_domains_files[i],neg_domains_files[i])
     #assign(paste(domains[i],"lex_df",sep="_"),lex_df(pos_domains_files[i],neg_domains_files[i]))
     #Clean/Remove NA values
