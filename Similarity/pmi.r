@@ -1,93 +1,81 @@
-sentiscore <- function(){}
-  domains=c("books","dvd","kitchen","electronics");i_ndomain=1;j_ndomain=2; 
-  #Get domain vector variables
-  domain1<-paste(domains[i_ndomain],"lex_df",sep="_")
-  domain2<-paste(domains[j_ndomain],"lex_df",sep="_")
+source(file = "get_lex.r",local = FALSE)
+sentiscore<- function(i_ndomain,domains)
+{
+  domain_name<-paste(domains[i_ndomain],"lex_dt",sep="_")
+  data1<-unique(get(domain_name))[lexicon_name!=""]
+  posLabel1<-data1[value==1,sum(count)]
+  negLabel1<-data1[value==-1,sum(count)]
+  N1<-data1[,sum(count)]
+  term_freq<-data1[,.(count=sum(count)),by=lexicon_name]
+  all_terms<-term_freq[,lexicon_name]
+  pos_data1<-data1[value==1]
+  pos_term_freq<- pos_data1[,.(count=sum(count)),by=lexicon_name]
+  neg_data1<-data1[value==-1]
+  neg_term_freq<- neg_data1[,.(count=sum(count)),by=lexicon_name]
+  pos_missing_terms<-setdiff(term_freq[,lexicon_name], pos_term_freq[,lexicon_name])
+  pos_missing_freq<-data.table(lexicon_name=pos_missing_terms,count=N1)
+  neg_missing_terms<-setdiff(term_freq[,lexicon_name], neg_term_freq[,lexicon_name])
+  neg_missing_freq<-data.table(lexicon_name=neg_missing_terms,count=N1)
   
-  #Clean domain lexicons
-  data1<-unique(removeNA(get(domain1)))
-  data1<-data1[data1[,1]!="",]
-  data2<-unique(removeNA(get(domain2)))
-  data2<-data2[data2[,1]!="",]
- # is.numeric(get(domain2)[get(domain2)[,3]==1,2])
-  ##Theorotical Explanation of the code
+  pos_term_freq_n1<- pos_term_freq[,.(lexicon_name,count=count*N1)]
+  term_freq_posLabel1<-term_freq[,.(lexicon_name,count=count*posLabel1)]
+  neg_term_freq_n1<- neg_term_freq[,.(lexicon_name,count=count*N1)]
+  term_freq_negLabel1<-term_freq[,.(lexicon_name,count=count*negLabel1)]
+  pos_term_freq_n1<-rbind(pos_term_freq_n1,pos_missing_freq)
+  neg_term_freq_n1<-rbind(neg_term_freq_n1,neg_missing_freq)
   
-  #Given a set of labeled samples in each domain, in this
-  #paper, we propose to extract a sentiment word vector for each
-  #domain. Denote si {R D×1} as the sentiment word vector of
-  # domain i, where si
-  #t is the sentiment score of the term t. The
-  #sentiment score of each term in a domain is computed using
-  #their associations with positive label in that domain minus their
-  #associations with negative label. In this paper we use pointwise
-  #mutual information (PMI) to measure the associations
-  #between terms and labels, and the sentiment score of term t
-  #in domain i can be formulated as follows:
-  #  s(i,t) =PMI(t, posLabeli) ??? PMI(t, negLabeli)
-  #=log { [n(t, posLabeli)Ni]/[n(t)n(posLabeli)] ??? log [n(t, negLabeli)Ni]/[n(t)n(negLabeli)]}
-  #=log { [n(t, posLabeli)n(negLabeli)] / n(t, negLabeli)n(posLabeli)    .......(3)
-  #where n(posLabeli) and n(negLabeli) are the numbers of
-  #positive samples and negative samples in domain i respectively,
-  #and n(t, posLabeli) and n(t, negLabeli) are the frequencies
-  #of term t occurring in positive and negative samples in domain
-  #i respectively. Ni is the number of samples in domain i.
-  #After extracting the sentiment word vector for each domain,
-  #we can compute the sentiment similarity of two domains using
-  #the cosine similarity of their sentiment word vectors, which is
-  #defined as follows:
-  #  SentiSim(i, j) = ( si · sj) /(||si||2 · ||sj||2)     ...... (4)
-  #Note that SentiSim(i, j) defined in Eq. (4) can be negative,
-  #although the probability is very small. In this paper, we
-  #constrain that the similarities between domains should be nonnegative.
-  #If the SentiSim score of a pair of domains is
-  #negative, we set it to 0.
- 
+  #Sort the data tables according to lexicon names
+  setkey(pos_term_freq_n1,lexicon_name)
+  setkey(neg_term_freq_n1,lexicon_name)
+  setkey(term_freq_posLabel1,lexicon_name)
+  setkey(term_freq_negLabel1,lexicon_name)
   
-  ##Code Begins Here ##
-  #Get the positive and negative label count for both the domains
+  s1<-pos_term_freq_n1[,count]/term_freq_posLabel1[,count]
+  s2<-neg_term_freq_n1[,count]/term_freq_negLabel1[,count]
   
-  assign(paste("posLabel1"),sum(as.numeric(data1[data1[,3]==1,2]),na.rm = TRUE))
-  assign(paste("negLabel1"),sum(as.numeric(data1[data1[,3]==-1,2]),na.rm = TRUE))
-  assign(paste("posLabel2"),sum(as.numeric(data2[data2[,3]==1,2]),na.rm = TRUE))
-  assign(paste("negLabel2"),sum(as.numeric(data2[data2[,3]==-1,2]),na.rm = TRUE))
+  s1<-log(s1)
   
-  #Get the total label count for both the domains
-  N1<-sum(as.numeric(data1[,2]),na.rm = TRUE)
-  N2<-sum(as.numeric(data2[,2]),na.rm = TRUE)
+  #s1[s1==-Inf]<-0
+  s2<-log(s2)
+  #s2[s2==-Inf]<-0
   
-  #Calculate count of every term in its domain
-  term_freq<-aggregate(data1$count, by=list(lexicon_name=data1$lexicon_name), FUN=sum)
-  all_terms<-term_freq[,1]
-  #Preparing data
-  pos_data1<-data1[data1[,3]==1,]
-  pos_term_freq<-aggregate(pos_data1$count, by=list(lexicon_name=pos_data1$lexicon_name), FUN=sum)
-  neg_data1<-data1[data1[,3]==-1,]
-  neg_term_freq<-aggregate(neg_data1$count, by=list(lexicon_name=neg_data1$lexicon_name), FUN=sum)
-  #
-  pos_missing_terms<-setdiff(term_freq[,1], pos_term_freq[,1])
-  #
-  neg_missing_terms<-setdiff(term_freq[,1], neg_term_freq[,1])
-  s=c()
-  for (i in 1:length(all_terms))
+  s<-s1-s2
+
+  return(list(lexicon_name=pos_term_freq_n1[,lexicon_name],score=s))
+}
+
+calcSim<-function(data_dt1=books_score,data_dt2=kitchen_score)
+{
+ # data_dt1=kitchen_score;data_dt2=electronics_score
+  missing_data1<-data.table(lexicon_name=setdiff(data_dt2[,lexicon_name],data_dt1[,lexicon_name]),score=0)
+  missing_data2<-data.table(lexicon_name=setdiff(data_dt1[,lexicon_name],data_dt2[,lexicon_name]),score=0)
+  data_dt1<-setkey(rbind(data_dt1,missing_data1),lexicon_name)
+  data_dt2<-setkey(rbind(data_dt2,missing_data2),lexicon_name)
+  s1<- t(data_dt1[,score])%*%data_dt2[,score]
+  s2<-sqrt(sum(data_dt1[,score]^2))*sqrt(sum(data_dt2[,score]^2))
+  s<-s1/s2;
+  if(s<0) s<-0
+  s[1]
+}
+
+domains=c("books","dvd","kitchen","electronics")
+Domains_index<-1:length(domains)
+for(i in 1:length(domains))
+{
+  x<-sentiscore(i,domains)
+  assign(paste(domains[i],"score",sep = "_"),as.data.table(x))
+}
+SentiSim<-matrix(data = 0,nrow = length(domains),ncol = length(domains))
+
+for( i in 1:length(domains))
+{
+  for( j in 1:length(domains))
   {
-    print(i)
-    current_term<-all_terms[i]
-    if (length(pos_missing_terms[current_term])==0) {
-      s1=0
-    }
+    if(i<j)
+   SentiSim[i,j]<-calcSim(get(paste(domains[i],"score",sep = "_")),get(paste(domains[j],"score",sep = "_")))
+    else if(i==j)
+      SentiSim[i,j]<-0
     else
-    {
-      s1<-log10((pos_term_freq[pos_term_freq[,1]==current_term,2][1]*N1)/(termfreq[termfreq[1,]==current_term,2][1]* posLabel1 ))
-    }
-    if (length(neg_missing_terms[current_term])==0) {
-      s2=0
-    }
-    else
-    {
-      s2<-log10((neg_term_freq[neg_term_freq[,1]==current_term,2][1]*N1)/(termfreq[termfreq[1,]==current_term,2][1]* negLabel1 ))
-    }
-    s<-c(s,(s1+s2))
+      SentiSim[i,j]<-SentiSim[j,i]
   }
-  #s1=
-  #s2=
-  #s=s1+s2
+}
