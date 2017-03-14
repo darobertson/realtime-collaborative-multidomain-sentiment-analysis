@@ -128,5 +128,6 @@ for (i in 1:length(all_terms))
   {
     s2<-log10((neg_term_freq[lexicon_name==current_term,count]*N1)/(term_freq[lexicon_name==current_term,count]* posLabel1 ))
   }
+  #if()
   s<-c(s,(s1+s2))
 }

@@ -1,0 +1,2 @@
+
+rw<-c("a","an","the","you","me","i","then","do","with","just","it","while","he","she","us","is","to","for","of","this","up","at","in","on","over","you","i","the","be","has","by","tweets","about","from","after","my","that","your","we")
