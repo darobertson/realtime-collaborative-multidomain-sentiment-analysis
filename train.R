@@ -21,7 +21,7 @@ MultiDomain  = function(X,y,d,p,alpha,beta,S,lambda1,lambda2, type)
   loss=f;
   k = 0;
   gamma = 1;
-  while  (k<1000 && gamma>10^(-40))
+  while  (k<100 && gamma>10^(-40))
   {
     print(k)
     k=k+1;
