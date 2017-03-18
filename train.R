@@ -21,7 +21,7 @@ MultiDomain  = function(X,y,d,p,alpha,beta,S,lambda1,lambda2, type)
   loss=f;
   k = 0;
   gamma = 1;
-  while  (k<100 && gamma>10^(-40))
+  while  (k<10 && gamma>10^(-40))
   {
     print(k)
     k=k+1;
@@ -134,11 +134,11 @@ D = ncol(X);
 #M = length(unique(d));
 f = 0;
 
-if (type=="ls")
-{
+    X<-as(X, "dgCMatrix")
 for (m in 1:M)
-  f = f+norm_vec((X[as.vector(d==m),]%*%(w+W[,m])-y[d==m]))^2  # sum((X[d==m,]%*%(w+W[,m])-y[d=m])^2);
-}
+    f = f + norm_vec(matmult_cpp(X[as.vector(d == m),], w + W[, m]) - y[d == m]) ^ 2
+ # f = f+norm_vec((X[as.vector(d==m),]%*%(w+W[,m])-y[d==m]))^2  # sum((X[d==m,]%*%(w+W[,m])-y[d=m])^2);
+
 f = f-alpha*t(p)%*%w;
 f = f+lambda1*(sum(w^2)+sum(sum(W^2)));
 
