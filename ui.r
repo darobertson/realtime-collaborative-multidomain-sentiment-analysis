@@ -17,16 +17,20 @@ shinyUI(fluidPage(
       textInput("keyword", label = h3("Enter keyword")),
       
       submitButton("Submit"), style="border-style: solid;float:left;border-color:red;"
-      ),#tagdiv end
+      ),#tagdiv end,
+      
       
       tags$div(
-        img(src='th.png'), style="clear:left;float:left;"
         
-      ),#tagdivend
-      tags$div(
-      plotOutput("cloud")
-      )#tagdivend
-  
+        imageOutput("text1") ,style="border-style: solid;clear:left;float:left;border-color:red;"
+        
+      ),
+      
+        
+        plotOutput("word")
+    
+      
+    
     )#mainpanel end
   
 ))##shinyfluid ends

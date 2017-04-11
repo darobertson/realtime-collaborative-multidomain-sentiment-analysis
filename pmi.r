@@ -6,14 +6,17 @@
     posLabel1<-data1[value==1,sum(count)]
     negLabel1<-data1[value==-1,sum(count)]
     N1<-data1[,sum(count)]
+  #  print(N1)
     term_freq<-data1[,.(count=sum(count)),by=lexicon_name]
     all_terms<-term_freq[,lexicon_name]
     pos_data1<-data1[value==1]
     pos_term_freq<- pos_data1[,.(count=sum(count)),by=lexicon_name]
     neg_data1<-data1[value==-1]
     neg_term_freq<- neg_data1[,.(count=sum(count)),by=lexicon_name]
+    
     pos_missing_terms<-setdiff(term_freq[,lexicon_name], pos_term_freq[,lexicon_name])
     pos_missing_freq<-data.table(lexicon_name=pos_missing_terms,count=N1)
+   # print(pos_missing_freq)
     neg_missing_terms<-setdiff(term_freq[,lexicon_name], neg_term_freq[,lexicon_name])
     neg_missing_freq<-data.table(lexicon_name=neg_missing_terms,count=N1)
     
@@ -79,4 +82,4 @@
         SentiSim[i,j]<-SentiSim[j,i]
     }
   }
-SentiSim<-(SentiSim>0.5)+0
+SentiSim<-(SentiSim>0.14)+0

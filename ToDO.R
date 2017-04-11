@@ -1,3 +1,13 @@
+Try::
+  manually set rthe values of similarity matrix, S
+
+
+fet<-rownames(w)
+tokens<-tokenize(paste(tweets.df$text,collapse = " " ))
+tokens<-unlist(tokens)
+match_tokens<-match(tokens,fet)
+match_tokens<-match_tokens[!is.na(match_tokens)]
+sum(w[match_tokens],na.rm = TRUE)
   Calculate similarity using corpus and sparse matrix
   Check whether the answer is correct when regression is calculated using sparse matrix
   -Prepare data for regression
@@ -5,9 +15,45 @@
   source(file = "get_lex.r",local = FALSE)
   source(file = "pmi.r",local = FALSE)
   source(file = "computeCost",local = FALSE)
+  
+  
+  
+  require(twitteR)
+  require(stringr)
+  require(RCurl)
+  require(qdap)
+  require(wordcloud)
+  require(tm)
+  require(ngram)
+   ck<-'yRudGaS3f1ySiyrIlkYoBhtPM'
+  cs<-'Ne694V5pv5q5j6x0e8SlSLnJVfVZ6NNTYWBFpnCASujSGiOUDa'
+   at<-'761938864697122817-xWZSEcLJUAX70PMrpfnkbiSTW2IL4MH'
+   as<-'XizvBqirw02MoFCzdiWAXEa8s3V2dbHEj3OXT797FTOye'
+   setup_twitter_oauth(ck,cs,at,as)
+   tweets<-searchTwitter("jio",n=1000,lang="en")
+  tweets<-strip_retweets(tweets)
+  tweets.df <- twListToDF(tweets)
+  tweets.df$text=gsub('http.*\\s*', '', tweets.df$text)
+  tweets.df$text = gsub("@\\w+", "", tweets.df$text)
+  tweets.df$text = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", tweets.df$text)
+  tweets.df$text = gsub("[[:punct:]]", "", tweets.df$text)
+  tweets.df$text <- str_replace_all(tweets.df$text,"\n","")
+  tweets.df$text=str_replace_all(tweets.df$text,"&amp;"," and ")
+  tweets.df$text=gsub("[^\x20-\x7E]", "", tweets.df$text)	
+  tweets=unique(tweets.df$text)
+  a=corpus(tweets.df$text)
+  b=dfm(a,ngrams=1,removePunct=TRUE,removeNumbers=TRUE)
+  b[,1:15]
+  #fet<-  tokenize(as.character(X_1),removeTwitter = TRUE,removePunct = TRUE,removeNumbers = TRUE)
+  
+  
+  
   #Sys.setenv(JAVA_HOME='C:\\Program Files\\Java\\jre1.8.0_111')
   #require(rJava)
   #.jinit()
+fet<-  tokenize(as.character(X_1),removeTwitter = TRUE,removePunct = TRUE,removeNumbers = TRUE)
+   class(unlist(fet))
+  
   require(quanteda)
   X_combined<-rbind(X_1,X_2,X_3,X_4)
   d<-c(d_1,d_2,d_3,d_4)
@@ -33,7 +79,7 @@
   T <- J( "Test" )
   T$sample("1")
   #X=[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0;0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1];
-  
+    
   #myMatrix<-matrix(data = 1:100000000)
   #system.time(apply(myMatrix, 2, function(x) x^2))
   

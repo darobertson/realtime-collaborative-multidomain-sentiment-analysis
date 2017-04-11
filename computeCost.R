@@ -1,7 +1,7 @@
-# computeCost<- function()
+ computeCost<- function()
 {
   
-}
+
 require(XML)
 require(data.table)
 M<-length(domains)
@@ -51,3 +51,4 @@ for( i in 1:length(domains))
 # cbind(X,c(get(domain_dt[i])[,lexicon_name],rep(NA,maxlen-N[i])))
 #}
 #X1<-matrix(data = 0,nrow = )
+ }

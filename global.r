@@ -1,4 +1,3 @@
-
 require(twitteR)
 require(stringr)
 require(RCurl)
@@ -11,23 +10,56 @@ at<-'761938864697122817-xWZSEcLJUAX70PMrpfnkbiSTW2IL4MH'
 as<-'XizvBqirw02MoFCzdiWAXEa8s3V2dbHEj3OXT797FTOye'
 setup_twitter_oauth(ck,cs,at,as)
 setup_twitter_oauth(ck,cs,at,as)
-getcloud<-function(b){
-  tweets<-searchTwitter(b,n=1000,lang="en")
+getvote<-function(b){
+  tweets<-searchTwitter(b,n=200,lang="en")
   tweets<-strip_retweets(tweets)
   tweets.df <- twListToDF(tweets)
   tweets.df$text=gsub('http.*\\s*', '', tweets.df$text)
-  tweets.df$text = gsub("@\\w+", "", tweets.df$text)  
+  tweets.df$text = gsub("@\\w+", "", tweets.df$text)
   tweets.df$text = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", tweets.df$text)
+  tweets.df$text = gsub("[[:punct:]]", "", tweets.df$text)
   tweets.df$text <- str_replace_all(tweets.df$text,"\n","")
   tweets.df$text=str_replace_all(tweets.df$text,"&amp;"," and ")
   tweets.df$text=gsub("[^\x20-\x7E]", "", tweets.df$text)
-  tweets.df$text = gsub("[[:punct:]]", "", tweets.df$text)
   tweets=unique(tweets.df$text)
-  rw<-c("a","an","the","you","me","i","then","do","with","just","it","while","he","She","us","is","to","for","of","this","up","at","in","on","over","you","I","The","THE","be","has","by","tweets","about","from","after","my","that","your","we")
-  tweets=removeWords(tweets,rw)
+  
+  tokens<-tokenize(paste(tweets,collapse = " " ))
+  tokens<-unlist(tokens)
+  match_tokens<-match(tokens,fet)
+  match_tokens<-match_tokens[!is.na(match_tokens)]
+  a<-sum(w[match_tokens])
+  if(a>0.5)
+  {
+    fileimg <- normalizePath(file.path('./www',
+                                          paste('handup','.png', sep='')))
+    
+  }
+  else
+  {
+    
+    fileimg <- normalizePath(file.path('./www',
+                                       paste('handdown','.png', sep='')))
+    
+  }
+#  source(file = "train.r", local = FALSE)
+  shell(cmd = 'Rscript.exe computeCost.R', wait=FALSE)
+  return(list(src = fileimg))
+  
+}
+getword<-function(b){
+  tweets<-searchTwitter(b,n=200,lang="en")
+  tweets<-strip_retweets(tweets)
+  tweets.df <- twListToDF(tweets)
+  tweets.df$text=gsub('http.*\\s*', '', tweets.df$text)
+  tweets.df$text = gsub("@\\w+", "", tweets.df$text)
+  tweets.df$text = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", tweets.df$text)
+  tweets.df$text = gsub("[[:punct:]]", "", tweets.df$text)
+  tweets.df$text <- str_replace_all(tweets.df$text,"\n","")
+  tweets.df$text=str_replace_all(tweets.df$text,"&amp;"," and ")
+  tweets.df$text=gsub("[^\x20-\x7E]", "", tweets.df$text)
+  tweets=unique(tweets.df$text)
   
   tweets_corpus<-Corpus(VectorSource((tweets)))
-  
   return(wordcloud(tweets_corpus))
+  
 }
-
