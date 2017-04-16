@@ -1,14 +1,14 @@
 library(shiny)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-  
-  
+  source("classify.r")
+  source("get_tweets.r")
+  source("searchtrain.r")
+  source("train.r")
   output$text1 <- renderImage({ 
     if(input$keyword!="")
     {
       getvote(input$keyword)
-      
-      
       
     }
     else

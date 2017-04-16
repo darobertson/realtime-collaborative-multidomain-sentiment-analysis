@@ -1,6 +1,4 @@
- computeCost<- function()
-{
-  
+
 
 require(XML)
 require(data.table)
@@ -25,6 +23,7 @@ for( i in 1:length(domains))
   assign(paste("d",i,sep="_"),c(rep.int(x =i,times = nrow(posxmldatatable)+nrow(negxmldatatable))))
   
 }
+ 
 # count_matrix<-matrix(data = 0,nrow = 2,ncol = length(terms_all_domains))
 # library(stringr)
 #for(k in 1:length(terms_all_domains))
@@ -51,4 +50,5 @@ for( i in 1:length(domains))
 # cbind(X,c(get(domain_dt[i])[,lexicon_name],rep(NA,maxlen-N[i])))
 #}
 #X1<-matrix(data = 0,nrow = )
- }
+ #}
+ 

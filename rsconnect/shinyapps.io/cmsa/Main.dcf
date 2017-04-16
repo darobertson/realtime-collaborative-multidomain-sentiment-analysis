@@ -1,0 +1,11 @@
+name: Main
+title: Main
+account: cmsa
+server: shinyapps.io
+appId: 172452
+bundleId: 790381
+url: https://cmsa.shinyapps.io/Main/
+when: 1492271125.70531
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .gitattributes|.httr-oauth|.RDataTmp|2016-17.txt|class_script.R|code.class|code.java|command.R|dump.R|Get_LEX.log|hey|loss.r|Main.rproj|Main.rxproj|New Text Document.txt|p.txt|pmat.txt|pos.xml|positive.review|positive.xml|README.md|senti.java|SentiWordNetDemoCode.class|SentiWordNetDemoCode.java|SentiWordNetDemoCode_2.class|SentiWordNetDemoCode_2.java|Test.class|Test.java|ToDO.R|train_prob.R|trainBench.R|.vs/Main/v14/.suo|Books/negative.review|Books/positive.review|Dvd/negative.review|Dvd/positive.review|Electronics/negative.review|Electronics/positive.review|Kitchen/negative.review|Kitchen/positive.review|pk/.gitignore|pk/.httr-oauth|pk/global.r|pk/server.r|pk/ui.r|rPython/cleanup|rPython/configure|rPython/configure.ac|rPython/configure.win|rPython/DESCRIPTION|rPython/INSTALL|rPython/LICENSE|rPython/NAMESPACE|rPython/README.md|rPython/inst/concat.py|rPython/man/python.assign.Rd|rPython/man/python.call.Rd|rPython/man/python.exec.Rd|rPython/man/python.load.Rd|rPython/R/python.assign.R|rPython/R/python.call.R|rPython/R/python.exec.R|rPython/R/python.get.R|rPython/R/python.load.R|rPython/R/python.method.call.R|rPython/R/zzz.R|rPython/src/Makevars.in|rPython/src/makevars.win|rPython/src/pycall.c|rPython/src/pycall.o|Similarity/pmi.r|Similarity/similarity.r

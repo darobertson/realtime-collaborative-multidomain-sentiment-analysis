@@ -88,7 +88,10 @@ MultiDomain  = function(X,y,d,p,alpha,beta,S,lambda1,lambda2, type)
     W_1 = W;
     
     if (k>1 && abs(loss[ncol(loss)]-loss[ncol(loss)-1])/abs(loss[ncol(loss)])<0.001)# || (loss(end)<0))
-    break;
+    {
+      print(loss[ncol(loss)]);
+      break;
+    }
   }
   
   return(list(w,W))
@@ -116,6 +119,15 @@ g_w = g_w + temp;
 g_W[,m] = g_W[,m] + temp;
 }
 }
+if(type=="log")
+{
+  for( m in 1:M){
+  temp =t(y[d==m]/(1+exp(y[d==m]*(X[d==m,]%*%(w+W[,m])))))%*%X[d==m,];
+   g_w = g_w - t(temp);
+  g_W[,m] = g_W[,m] - t(temp)
+  
+  }
+}
 
 for (m in 1:M){
   #----------------#####################
@@ -138,6 +150,11 @@ if (type=="ls")
 {
 for (m in 1:M)
   f = f+norm_vec((X[as.vector(d==m),]%*%(w+W[,m])-y[d==m]))^2  # sum((X[d==m,]%*%(w+W[,m])-y[d=m])^2);
+}
+if(type=="log")
+{
+  for (m in 1:M)
+  f = f+ sum(log(1+exp(-y[d==m]*(X[d==m,]%*%(w+W[,m])))));
 }
 f = f-alpha*t(p)%*%w;
 f = f+lambda1*(sum(w^2)+sum(sum(W^2)));
